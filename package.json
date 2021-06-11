@@ -1,0 +1,31 @@
+{
+	"name": "discord-assistant",
+	"version": "1.0.0",
+	"description": "A Discord bot to assist you with common tasks",
+	"scripts": {
+		"start": "ts-node index.ts"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/caburum/discord-assistant.git"
+	},
+	"keywords": [
+		"discord",
+		"notion"
+	],
+	"author": "Calum Dingwall (https://github.com/caburum)",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/caburum/discord-assistant/issues"
+	},
+	"homepage": "https://github.com/caburum/discord-assistant#readme",
+	"devDependencies": {
+		"typescript": "^4.2.4",
+		"ts-node": "^10.0.0"
+	},
+	"dependencies": {
+		"@notionhq/client": "^0.1.9",
+		"discord.js": "^12.5.3",
+		"discord.js-commando": "^0.12.3"
+	}
+}
