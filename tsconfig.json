@@ -10,6 +10,7 @@
     "inlineSources": true,
     "types": ["node"],
     "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+		"resolveJsonModule": true
   }
 }
