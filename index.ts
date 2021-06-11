@@ -1,5 +1,5 @@
 import * as Commando from 'discord.js-commando'
-import * as config from './config.json'
+import {discord as config } from './config.json'
 import * as path from 'path'
 
 const client = new Commando.CommandoClient({
