@@ -8,7 +8,6 @@ export default class TaskListCommand extends Command {
 			group: 'task',
 			memberName: 'tasks',
 			description: 'Lists all uncompleted tasks',
-			ownerOnly: true,
 
 			args: []
 		});

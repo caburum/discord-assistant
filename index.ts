@@ -34,6 +34,10 @@ discord.registry
 		dirname: path.resolve('commands')
 	});
 
+discord.dispatcher.addInhibitor((msg) => {
+	return discord.isOwner(msg.author) ? false : 'not the owner';
+})
+
 discord
 	.on('error', console.error)
 	.on('warn', console.warn)
