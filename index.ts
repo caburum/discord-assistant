@@ -1,10 +1,10 @@
-import * as Commando from 'discord.js-commando'
-import {discord as config } from './config.json'
-import * as path from 'path'
+import * as Commando from 'discord.js-commando';
+import { discord as config } from './config.json';
+import * as path from 'path';
 
 const client = new Commando.CommandoClient({
 	owner: config.owner,
-	commandPrefix: config.prefix
+	commandPrefix: config.prefix,
 });
 
 client.registry
@@ -12,14 +12,14 @@ client.registry
 	.registerGroups([
 		['general', 'General commands'],
 		['task', 'Task commands'],
-		['fun', 'Fun commands']
+		['fun', 'Fun commands'],
 	])
 
 	// Registers all built-in commands, groups, and argument types
 	.registerDefaultTypes()
 	.registerDefaultGroups()
 	.registerDefaultCommands({
-		unknownCommand: false
+		unknownCommand: false,
 	})
 
 	// Registers all types in the ./types/ directory
@@ -31,18 +31,18 @@ client.registry
 	// Registers all commands in the ./commands/ directory
 	.registerCommandsIn({
 		filter: /^([^.].*)\.(js|ts)$/,
-		dirname: path.resolve('commands')
+		dirname: path.resolve('commands'),
 	});
 
 // Look for .ts files instead of .js files for commands
 client.registry.resolveCommandPath = function (group, memberName) {
 	return path.join(client.registry.commandsPath, group, `${memberName}.ts`);
-}
+};
 
 // Make all commands owner-only
 client.dispatcher.addInhibitor((msg) => {
 	return client.isOwner(msg.author) ? false : 'not the owner';
-})
+});
 
 // Events
 client
@@ -52,7 +52,9 @@ client
 	.on('ready', () => {
 		console.log(`Client ready; logged in as ${client.user?.username}#${client.user?.discriminator} (${client.user?.id})`);
 	})
-	.on('disconnect', () => { console.warn('Disconnected!'); })
+	.on('disconnect', () => {
+		console.warn('Disconnected!');
+	})
 	.on('commandError', (cmd, err, msg, reason, args_4) => {
 		if (err instanceof Commando.FriendlyError) return;
 		console.error(`Error in command ${cmd.groupID}:${cmd.memberName}`, err);
@@ -72,4 +74,4 @@ client
 	});
 
 // Login
-client.login(config.token)
+client.login(config.token);

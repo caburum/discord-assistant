@@ -1,6 +1,6 @@
 import * as Notion from '@notionhq/client';
 import { notion as config } from '../config.json';
-import { Page, TitlePropertyValue, SelectPropertyValue, RelationProperty, CreatedTimePropertyValue } from '@notionhq/client/build/src/api-types';
+import { Page, TitlePropertyValue, SelectPropertyValue, RelationProperty, CreatedTimePropertyValue, URLPropertyValue, Color } from '@notionhq/client/build/src/api-types';
 
 const notion = new Notion.Client({
 	auth: config.token,
@@ -18,11 +18,30 @@ export async function getDB(uuid: string): Promise<any> {
 	return db.results;
 }
 
-export async function generateTaskList() {
+interface Task {
+	title: string | undefined;
+	id: string;
+	importance: {
+		name: string | undefined;
+		color: Color;
+	};
+	type: {
+		name: string | undefined;
+		color: Color;
+	};
+	status: {
+		name: string | undefined;
+		color: Color;
+	};
+	created: number;
+	url: string | undefined;
+}
+
+export async function generateTaskList(): Promise<Array<Task>> {
 	var results: any = [];
 	var db = await getDB(config.taskDB);
 	db.forEach((result: Page) => {
-		interface Properties {
+		interface TaskProperties {
 			Name?: TitlePropertyValue;
 			Importance?: SelectPropertyValue;
 			Type?: SelectPropertyValue;
@@ -30,26 +49,31 @@ export async function generateTaskList() {
 			Blocking?: RelationProperty;
 			Required?: RelationProperty;
 			'Date Created'?: CreatedTimePropertyValue;
+			URL?: URLPropertyValue;
 		}
 
-		var properties: Properties = result.properties;
+		var properties: TaskProperties = result.properties;
 
-		results.push({
+		var task: Task = {
 			title: properties.Name?.title[0].plain_text,
+			id: result.id.replace(/\-/g, ''),
 			importance: {
-				name: properties.Importance?.select.name || 'Unknown',
+				name: properties.Importance?.select.name,
 				color: properties.Importance?.select.color || 'default',
 			},
 			type: {
-				name: properties.Type?.select.name || 'Unknown',
+				name: properties.Type?.select.name,
 				color: properties.Type?.select.color || 'default',
 			},
 			status: {
-				name: properties.Status?.select.name || 'Unknown',
+				name: properties.Status?.select.name,
 				color: properties.Status?.select.color || 'default',
 			},
 			created: Date.parse(properties['Date Created']?.created_time || ''),
-		});
+			url: properties.URL?.url,
+		};
+
+		results.push(task);
 	});
 	return results;
 }
