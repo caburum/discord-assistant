@@ -4,7 +4,7 @@ import * as Types from '@notionhq/client/build/src/api-types';
 
 const notion = new Notion.Client({
 	auth: config.token,
-	logLevel: Notion.LogLevel.DEBUG,
+	// logLevel: Notion.LogLevel.DEBUG,
 });
 
 export function formatUUID(uuid: string): string {
@@ -38,21 +38,21 @@ interface Task {
 	url: string | undefined;
 }
 
+interface TaskProperties {
+	Name?: Types.TitlePropertyValue;
+	Importance?: Types.SelectPropertyValue;
+	Type?: Types.SelectPropertyValue;
+	Status?: Types.SelectPropertyValue;
+	Blocking?: Types.RelationProperty;
+	Required?: Types.RelationProperty;
+	'Date Created'?: Types.CreatedTimePropertyValue;
+	URL?: Types.URLPropertyValue;
+}
+
 export async function generateTaskList(filter?: Types.Filter): Promise<Array<Task>> {
 	var results: any = [];
 	var db = await getDB(config.taskDB, filter);
 	db.forEach((result: Types.Page) => {
-		interface TaskProperties {
-			Name?: Types.TitlePropertyValue;
-			Importance?: Types.SelectPropertyValue;
-			Type?: Types.SelectPropertyValue;
-			Status?: Types.SelectPropertyValue;
-			Blocking?: Types.RelationProperty;
-			Required?: Types.RelationProperty;
-			'Date Created'?: Types.CreatedTimePropertyValue;
-			URL?: Types.URLPropertyValue;
-		}
-
 		var properties: TaskProperties = result.properties;
 
 		var task: Task = {
@@ -77,4 +77,15 @@ export async function generateTaskList(filter?: Types.Filter): Promise<Array<Tas
 		results.push(task);
 	});
 	return results;
+}
+
+export async function createTask(properties: { [propertyName: string]: Types.InputPropertyValue }) {
+	console.log(properties);
+	var page = await notion.pages.create({
+		parent: {
+			database_id: config.taskDB,
+		},
+		properties: properties,
+	});
+	console.log(page);
 }
