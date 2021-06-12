@@ -1,6 +1,6 @@
 import * as Notion from '@notionhq/client';
 import { notion as config } from '../config.json';
-import { Page, TitlePropertyValue, SelectPropertyValue, RelationProperty, CreatedTimePropertyValue, URLPropertyValue, Color } from '@notionhq/client/build/src/api-types';
+import * as Types from '@notionhq/client/build/src/api-types';
 
 const notion = new Notion.Client({
 	auth: config.token,
@@ -11,9 +11,10 @@ export function formatUUID(uuid: string): string {
 	return uuid.substr(0, 8) + '-' + uuid.substr(8, 4) + '-' + uuid.substr(12, 4) + '-' + uuid.substr(16, 4) + '-' + uuid.substr(20);
 }
 
-export async function getDB(uuid: string): Promise<any> {
+export async function getDB(uuid: string, filter?: Types.Filter): Promise<any> {
 	var db = await notion.databases.query({
 		database_id: uuid,
+		filter: filter,
 	});
 	return db.results;
 }
@@ -23,33 +24,33 @@ interface Task {
 	id: string;
 	importance: {
 		name: string | undefined;
-		color: Color;
+		color: Types.Color;
 	};
 	type: {
 		name: string | undefined;
-		color: Color;
+		color: Types.Color;
 	};
 	status: {
 		name: string | undefined;
-		color: Color;
+		color: Types.Color;
 	};
 	created: number;
 	url: string | undefined;
 }
 
-export async function generateTaskList(): Promise<Array<Task>> {
+export async function generateTaskList(filter?: Types.Filter): Promise<Array<Task>> {
 	var results: any = [];
-	var db = await getDB(config.taskDB);
-	db.forEach((result: Page) => {
+	var db = await getDB(config.taskDB, filter);
+	db.forEach((result: Types.Page) => {
 		interface TaskProperties {
-			Name?: TitlePropertyValue;
-			Importance?: SelectPropertyValue;
-			Type?: SelectPropertyValue;
-			Status?: SelectPropertyValue;
-			Blocking?: RelationProperty;
-			Required?: RelationProperty;
-			'Date Created'?: CreatedTimePropertyValue;
-			URL?: URLPropertyValue;
+			Name?: Types.TitlePropertyValue;
+			Importance?: Types.SelectPropertyValue;
+			Type?: Types.SelectPropertyValue;
+			Status?: Types.SelectPropertyValue;
+			Blocking?: Types.RelationProperty;
+			Required?: Types.RelationProperty;
+			'Date Created'?: Types.CreatedTimePropertyValue;
+			URL?: Types.URLPropertyValue;
 		}
 
 		var properties: TaskProperties = result.properties;
